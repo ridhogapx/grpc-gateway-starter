@@ -1,0 +1,12 @@
+syntax = "proto3";
+package api_service.v1;
+option go_package = "./proto";
+
+message HealthCheckRequest {}
+
+message HealthCheckResponse {
+
+  string code = 1;
+  string message = 2;
+  
+}

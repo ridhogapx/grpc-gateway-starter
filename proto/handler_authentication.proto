@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package api_service.v1;
+option go_package = "./proto";
+
+message SignUpRequest {
+
+	string email = 1;
+	string username = 2;
+	string name = 3;
+	string password = 4;
+	string profile_picture = 5;
+	bool allow_nsfw = 6;
+
+}
+
+message SignUpResponse {
+
+	message TSignUp {
+
+		string token = 1;
+		string status = 2;
+		string created_at = 3;
+
+	}
+
+	string code = 1;
+	string message = 2;
+	TSignUp data = 3;
+
+}
