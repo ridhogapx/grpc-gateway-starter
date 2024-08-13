@@ -1,23 +1,22 @@
- syntax = "proto3";
- package grpc_gateway_101.v1;
- option go_package = "./proto";
+syntax = "proto3";
+package api_service.v1;
+option go_package = "./proto";
 
 import "google/api/annotations.proto";
-
-message HealthCheckRequest {}
-
-message HealthCheckResponse {
-
-  string code = 1;
-  string message = 2;
-  
-}
+import "proto/handler_healthcheck.proto";
+import "proto/handler_authentication.proto";
 
 service ApiService {
    
     rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {
         option (google.api.http) = {
           get: "/healthcheck",
+        };
+    }
+
+    rpc SignUp(SignUpRequest) returns (SignUpResponse) {
+        option (google.api.http) = {
+          post: "/v1/sign-up",
         };
     }
  
