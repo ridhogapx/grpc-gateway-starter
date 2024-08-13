@@ -1,0 +1,24 @@
+ syntax = "proto3";
+ package grpc_gateway_101.v1;
+ option go_package = "./proto";
+
+import "google/api/annotations.proto";
+
+message HealthCheckRequest {}
+
+message HealthCheckResponse {
+
+  string code = 1;
+  string message = 2;
+  
+}
+
+service ApiService {
+   
+    rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {
+        option (google.api.http) = {
+          get: "/healthcheck",
+        };
+    }
+ 
+}
