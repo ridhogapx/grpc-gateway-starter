@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	pb "api-service/server/proto"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
 	"google.golang.org/grpc/credentials/insecure"
@@ -15,7 +15,9 @@ import (
 
 func main() {
 
-	fmt.Println("[main][func: RunGateway] Starting gateway server on port :3000")
+	log := zap.Must(zap.NewProduction())
+
+	log.Info("Starting gateway server", zap.String("addr", ":3000"))
 
 	mux := runtime.NewServeMux()
 
@@ -27,7 +29,7 @@ func main() {
 
 	err := pb.RegisterApiServiceHandlerFromEndpoint(ctx, mux, "localhost:9000", opts)
 	if err != nil {
-		fmt.Println("[main][func: RunGateway] Couldn't register service from endpoint:", err)
+		log.Debug("Couldn't register service from endpoint", zap.Error(err))
 		return
 	}
 
