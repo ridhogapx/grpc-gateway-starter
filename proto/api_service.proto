@@ -17,6 +17,7 @@ service ApiService {
     rpc SignUp(SignUpRequest) returns (SignUpResponse) {
         option (google.api.http) = {
           post: "/v1/sign-up",
+          body: "*",
         };
     }
  

@@ -3,6 +3,8 @@ syntax = "proto3";
 package api_service.v1;
 option go_package = "./proto";
 
+import "proto/core.proto";
+
 message SignUpRequest {
 
 	string email = 1;
@@ -26,6 +28,7 @@ message SignUpResponse {
 
 	string code = 1;
 	string message = 2;
-	TSignUp data = 3;
+	repeated Error errors = 3;
+	TSignUp data = 4;
 
 }

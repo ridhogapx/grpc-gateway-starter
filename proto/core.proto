@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package api_service.v1;
+option go_package = "./proto";
+
+message Error {
+
+	string field = 1;
+	string tag = 2;
+
+}
+
+message Pagination {
+
+	int32 page = 1;
+	int32 limit = 2;
+	int32 total_rows = 3;
+	int32 total_pages = 4;
+
+}
