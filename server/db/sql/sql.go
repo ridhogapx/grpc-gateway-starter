@@ -5,16 +5,16 @@ import (
 	"gorm.io/gorm"
 )
 
-type repository struct {
+type Repository struct {
 	db  *gorm.DB
 	log *zap.Logger
 }
 
-func NewRepository(db *gorm.DB) *repository {
+func NewRepository(db *gorm.DB) *Repository {
 
 	logger := zap.Must(zap.NewProduction())
 
-	return &repository{
+	return &Repository{
 		db:  db,
 		log: logger,
 	}
