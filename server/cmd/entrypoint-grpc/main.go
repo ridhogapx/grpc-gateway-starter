@@ -10,15 +10,22 @@ import (
 
 	pb "api-service/server/proto"
 
+	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
-var dsn = "host=localhost user=postgres password=postgres dbname=commiss_art_app port=5432 sslmode=disable Timezone=Asia/Jakarta"
+//var dsn = "host=localhost user=postgres password=postgres dbname=commiss_art_app port=5432 sslmode=disable Timezone=Asia/Jakarta"
 
 func main() {
 
 	log := zap.Must(zap.NewProduction())
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Debug("Couldn't load .env file.")
+		os.Exit(1)
+	}
 
 	log.Info("Starting gRPC Server...")
 
@@ -28,7 +35,9 @@ func main() {
 		return
 	}
 
-	gormConf, err := config.NewGorm(dsn)
+	gormConf, err := config.NewGorm(
+		os.Getenv("DB_DSN"),
+	)
 	if err != nil {
 		os.Exit(1)
 	}
@@ -42,7 +51,7 @@ func main() {
 		grpcServer, srv,
 	)
 
-	log.Info("gRPC Server is running on port 9000")
+	log.Info("gRPC Server is running.", zap.String("addr", ":9000"))
 
 	go func() {
 		err = grpcServer.Serve(listener)
