@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+import "google/api/field_behavior.proto";
+import "protoc-gen-gorm/options/gorm.proto";
+import "google/protobuf/timestamp.proto";
+
+package api_service.v1;
+option go_package = "./proto";
+
+message User {
+
+    option (gorm.opts) = {
+        ormable: true,
+        table: "users",
+    };
+    
+    int32 id = 1 [
+        (gorm.field).tag = {primary_key: true unique: true not_null: true auto_increment: true}
+    ];
+
+    string username = 2 [
+        (gorm.field).tag = {not_null: false}
+    ];
+    string password = 3 [
+        (gorm.field).tag = {not_null: false}
+    ];
+    string displayName = 4 [
+        (gorm.field).tag = {not_null: false}
+    ];
+    string email = 5 [
+        (gorm.field).tag = {not_null: false index: "idx_users_email"}
+    ];
+    string status = 6 [
+        (gorm.field).tag = {not_null: false default:"ACTIVE"}
+    ];
+    string avatar = 7 [
+        (gorm.field).tag = {not_null: false default: ""}
+    ];
+    string config = 8 [
+        (gorm.field).tag = {not_null: false type: "jsonb" default: "{}"}
+    ];
+
+    google.protobuf.Timestamp createdAt = 101 [(google.api.field_behavior) = OUTPUT_ONLY, (gorm.field).tag = {not_null: false default: "CURRENT_TIMESTAMP"}];
+    google.protobuf.Timestamp updatedAt = 102 [(google.api.field_behavior) = OUTPUT_ONLY, (gorm.field).tag = {not_null: false default: "CURRENT_TIMESTAMP"}];
+    google.protobuf.Timestamp deletedAt = 103 [(google.api.field_behavior) = OUTPUT_ONLY, (gorm.field).tag = {not_null: false}];
+
+}
