@@ -1,17 +1,18 @@
 package sql
 
 import (
-	"api-service/server/db/model"
+	pb "api-service/server/proto"
 	"time"
 
+	"github.com/fatih/structs"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func (r *Repository) UpdateOrCreateUser(data *model.User) (*model.User, error) {
+func (r *Repository) UpdateOrCreateUser(data *pb.UserORM) (*pb.UserORM, error) {
 
-	if data.ID < 1 {
+	if data.Id < 1 {
 
 		err := r.db.Create(&data).Error
 		if err != nil {
@@ -26,18 +27,11 @@ func (r *Repository) UpdateOrCreateUser(data *model.User) (*model.User, error) {
 		loc, _ := time.LoadLocation("Asia/Jakarta")
 		t := time.Now().In(loc)
 
-		v := map[string]interface{}{
-			"Name":        data.Name,
-			"Username":    data.Username,
-			"Status":      data.Status,
-			"ProfilePict": data.ProfilePict,
-			"AllowNSFW":   data.AllowNSFW,
-			"Bio":         data.Bio,
-			"SocialMedia": data.SocialMedia,
-			"UpdatedAt":   t,
-		}
+		data.UpdatedAt = &t
 
-		err := r.db.Where("id = ?", data.ID).Updates(&v).Error
+		dataMap := structs.Map(data)
+
+		err := r.db.Where("id = ?", data.Id).Updates(&dataMap).Error
 		if err != nil {
 			r.log.Debug("[func: UpdateOrCreateUser] Something went wrong in query execution", zap.Error(err))
 			return nil, status.Errorf(codes.Internal, "Internal Error")
@@ -49,9 +43,9 @@ func (r *Repository) UpdateOrCreateUser(data *model.User) (*model.User, error) {
 
 }
 
-func (r *Repository) FindUser(v *model.User, field []string) (data []*model.User, err error) {
+func (r *Repository) FindUser(v *pb.UserORM, field []string) (data []*pb.UserORM, err error) {
 
-	query := r.db.Model(&model.User{})
+	query := r.db.Model(&pb.UserORM{})
 
 	if len(field) > 0 {
 		query = query.Select(field)
