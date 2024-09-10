@@ -1,7 +1,6 @@
 package api
 
 import (
-	"api-service/server/db/model"
 	pb "api-service/server/proto"
 	"context"
 
@@ -32,7 +31,7 @@ func (s *GRPCService) SignUp(ctx context.Context, req *pb.SignUpRequest) (*pb.Si
 
 	}
 
-	validateUser, err := s.repos.FindUser(&model.User{Username: req.GetUsername()}, []string{"users.id", "users.username", "users.email"})
+	validateUser, err := s.repos.FindUser(&pb.UserORM{Username: req.GetUsername()}, []string{"users.id", "users.username", "users.email"})
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +40,7 @@ func (s *GRPCService) SignUp(ctx context.Context, req *pb.SignUpRequest) (*pb.Si
 		return nil, status.Errorf(codes.InvalidArgument, "Username has been already taken. Please use other username!")
 	}
 
-	userORM := &model.User{}
+	userORM := &pb.UserORM{}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.GetPassword()), 14)
 	if err != nil {
@@ -49,11 +48,11 @@ func (s *GRPCService) SignUp(ctx context.Context, req *pb.SignUpRequest) (*pb.Si
 	}
 
 	userORM.Username = req.GetUsername()
-	userORM.Name = req.GetName()
-	userORM.Email = req.GetEmail()
 	userORM.Password = string(hashedPassword)
-	userORM.ProfilePict = req.GetProfilePicture()
-	userORM.AllowNSFW = req.GetAllowNsfw()
+	userORM.DisplayName = req.GetDisplayName()
+	userORM.Email = req.GetEmail()
+	userORM.Avatar = req.GetAvatar()
+
 	userORM.Status = "PENDING"
 
 	_, err = s.repos.UpdateOrCreateUser(userORM)
